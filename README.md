@@ -1,0 +1,2 @@
+# Network-Traffic-Classification
+The goal of this project is two fold: One, to simulate a real-time consumer-grade network traffic scenario by implementing a multitude of application &amp; network level protocols in C/C++. And Two, classifying network traffic accurately, efficiently in real-time, using features obtained only through the initial packet-flow, and without identifying the protocol-ports to generalize to dynamic &amp; unpredictable traffic.
