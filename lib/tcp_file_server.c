@@ -35,7 +35,7 @@ void sendFile(int data_socket, FILE* file_fd) {
 void main() {
 	int data_socket, len = 0, servPort, listen_socket, n=0, waitSize=16, clntAddrLen = sizeof(struct sockaddr_in), p;
 	struct sockaddr_in servAddr, clntAddr;
-	char servName[]="127.0.0.1";
+	char servName[]="192.168.43.68";
 	servPort = 38086;
 	memset(&servAddr,0,sizeof(servAddr));
 	

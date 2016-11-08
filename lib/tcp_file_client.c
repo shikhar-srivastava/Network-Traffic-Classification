@@ -25,7 +25,7 @@ void main(int argc, char* argv[]) {
 		printf("Usage : $%s \"file_name\"\n", argv[0]);
 		exit(1);
 	}
-	char servName[]="127.0.0.1";
+	char servName[]="192.168.43.68";
 	servPort = 38086;
 	
 	memset(&servAddr,0,sizeof(servAddr));
@@ -62,7 +62,7 @@ void main(int argc, char* argv[]) {
 			fwrite(buffer, sizeof(char), bytes_read, file_fd);
 			total_bytes_read += bytes_read;
 			printf("\r");
-			int i, current_progress = (bytes_read/total_bytes_read) * 80;
+			int i, current_progress = (total_bytes_read/file_size) * 80;
 			for(i = 0; i < current_progress; i++)
 				printf("*");
 			for(; i < 80; i++)

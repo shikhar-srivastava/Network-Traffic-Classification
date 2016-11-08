@@ -107,7 +107,7 @@ void main(int argc, char* argv[]) {
 	if(file_size > 0) {	//read file
 		printf("Reading file...\n");
 		int bytes_read = 0;
-		size_t total_bytes_read;
+		size_t total_bytes_read = 0;
 		FILE *file_fd = fopen(file_path, "w+");
 
 		while(total_bytes_read < file_size) {
@@ -117,7 +117,7 @@ void main(int argc, char* argv[]) {
 			fwrite(buffer, sizeof(char), bytes_read, file_fd);
 			total_bytes_read += bytes_read;
 			printf("\r");
-			int i, current_progress = (bytes_read/total_bytes_read) * 50;
+			int i, current_progress = (total_bytes_read/file_size) * 50;
 			for(i = 0; i < current_progress; i++)
 				printf("*");
 			for(; i < 50; i++)
