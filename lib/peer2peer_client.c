@@ -19,7 +19,7 @@ void main(int argc, char* argv[]) {
 	char buffer[PIECE_SIZE];
 	int data_socket, servPort, clntAddrLen;
 	size_t file_size;
-	struct sockaddr_in myAddr,clntAddr, bcastAddr, servAddr;
+	struct sockaddr_in myAddr, bcastAddr, servAddr;
 	char* file_path;
 	
 	if(argc == 2) file_path = argv[1];
@@ -91,7 +91,7 @@ void main(int argc, char* argv[]) {
 	}
 
 	printf("Listening for responses...\n");
-	/*struct pollfd data_poll;
+	struct pollfd data_poll;
 	data_poll.fd = data_socket;
 	data_poll.events = POLLIN;
 
@@ -100,15 +100,14 @@ void main(int argc, char* argv[]) {
 	if(data_poll.revents != POLLIN) {	//exit on timeout for data transfer initiaion
 		printf("No responses!\n");
 		exit(0);
-	}*/
-	
-	//Server Address
-	if((data_socket = accept(listen_socket, (struct sockaddr*)&clntAddr, &clntAddrLen)) < 0) {
+	}
+	if((data_socket = accept(listen_socket, (struct sockaddr*)&myAddr, &clntAddrLen)) < 0) {
 		perror("Error : accept failed");
 		exit(1);
 	}
 
-	if(recv(data_socket, &file_size, sizeof(size_t), 0) <= 0) {	//get file size
+	size_t file_size;
+	if(recv(data_socket, &file_size, sizeof(size_t), 0) < 0) {	//get file size
 		printf("Unable to establish connection!\n");
 		exit(1);
 	}
