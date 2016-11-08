@@ -11,7 +11,7 @@
 #include <poll.h>
 #include <sys/wait.h>
 
-#define PIECE_SIZE 256000
+#define PIECE_SIZE 256
 #define BCAST_LISTEN 38080
 #define DATA_PORT 38086
 
@@ -19,7 +19,7 @@ void main(int argc, char* argv[]) {
 	char buffer[PIECE_SIZE];
 	int data_socket, servPort, clntAddrLen;
 	size_t file_size;
-	struct sockaddr_in myAddr, bcastAddr, servAddr;
+	struct sockaddr_in myAddr,clntAddr, bcastAddr, servAddr;
 	char* file_path;
 	
 	if(argc == 2) file_path = argv[1];
@@ -28,18 +28,24 @@ void main(int argc, char* argv[]) {
 		exit(1);
 	}
 	//char servName[]="127.0.0.1";
-	servPort = 38086;
+	//servPort = 38086;
 
 	
 	memset(&myAddr, 0, sizeof(myAddr));
 	myAddr.sin_family = AF_INET;
+<<<<<<< Updated upstream
 	myAddr.sin_addr.s_addr = inet_addr("192.168.43.68");
 	// inet_pton(AF_INET, INADDR_ANY, &myAddr.sin_addr);
 	myAddr.sin_port = htons(servPort);
+=======
+	myAddr.sin_addr.s_addr = inet_addr("192.168.43.67");
+	// inet_pton(AF_INET, INADDR_ANY, &myAddr.sin_addr)
+	myAddr.sin_port = htons(DATA_PORT);
+>>>>>>> Stashed changes
 	
 	memset(&bcastAddr, 0, sizeof(bcastAddr));
 	bcastAddr.sin_family = AF_INET;
-	bcastAddr.sin_addr.s_addr = inet_addr("192.168.43.255");
+	bcastAddr.sin_addr.s_addr = INADDR_BROADCAST;//inet_addr("192.168.43.255");
 	bcastAddr.sin_port = htons(BCAST_LISTEN);
 	
 	int bcast_socket;
@@ -56,13 +62,13 @@ void main(int argc, char* argv[]) {
 	printf(" \n");	//very important for some weird reason
 
 	//prepare Broadcast message
-	char myIP[] = "192.168.43.68";
+	char myIP[] = "192.168.43.67";
 	strcpy(buffer, "myIP:");
 	strcpy(buffer, strcat(buffer,myIP));
 	strcpy(buffer, strcat(buffer,"FILE:"));
 	strcpy(buffer, strcat(buffer,file_path));
 	strcpy(buffer, strcat(buffer,"\0"));
-
+        puts(buffer);
 	if(sendto(bcast_socket, buffer, strlen(buffer), 0,(struct sockaddr*) &bcastAddr, sizeof(servAddr)) <= 0) {
 		perror("Broadcast failed : ");
 		exit(1);
@@ -85,17 +91,19 @@ void main(int argc, char* argv[]) {
 	}
 
 	printf("Listening for responses...\n");
-	struct pollfd data_poll;
+	/*struct pollfd data_poll;
 	data_poll.fd = data_socket;
 	data_poll.events = POLLIN;
 
-	poll(&data_poll, 1, 5000);
+	poll(&data_poll,1, 5000);
 
 	if(data_poll.revents != POLLIN) {	//exit on timeout for data transfer initiaion
 		printf("No responses!\n");
 		exit(0);
-	}
-	if((data_socket = accept(listen_socket, (struct sockaddr*)&myAddr, &clntAddrLen)) < 0) {
+	}*/
+	
+	//Server Address
+	if((data_socket = accept(listen_socket, (struct sockaddr*)&clntAddr, &clntAddrLen)) < 0) {
 		perror("Error : accept failed");
 		exit(1);
 	}
