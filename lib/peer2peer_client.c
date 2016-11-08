@@ -33,7 +33,7 @@ void main(int argc, char* argv[]) {
 	
 	memset(&myAddr, 0, sizeof(myAddr));
 	myAddr.sin_family = AF_INET;
-	myAddr.sin_addr.s_addr = inet_addr("1192.168.43.68");
+	myAddr.sin_addr.s_addr = inet_addr("192.168.43.68");
 	// inet_pton(AF_INET, INADDR_ANY, &myAddr.sin_addr);
 	myAddr.sin_port = htons(servPort);
 	

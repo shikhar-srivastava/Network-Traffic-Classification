@@ -13,7 +13,7 @@
 #include <poll.h>
 
 //				   256KB
-#define PIECE_SIZE 256000
+#define PIECE_SIZE 256
 #define FILE_ROOT "../res/"
 #define BCAST_LISTEN 38080
 #define DATA_PORT 38086
@@ -40,10 +40,11 @@ void main() {
 	int data_socket, listen_socket;
 	
 	char buffer[PIECE_SIZE];
-	int len = 0, n = 0, bcastAddrLen = sizeof(struct sockaddr_in), p;
+	memset(buffer, 0, PIECE_SIZE);
+	int len = 0, n = 0, clntAddrLen = sizeof(struct sockaddr_in), p;
 	struct sockaddr_in clntAddr, bcastAddr;
 	
-	char clntName[] = "127.0.0.1";	//10.86.0.39
+	char clntName[15];
 	
 	memset(&clntAddr, 0, sizeof(clntAddr));
 	memset(&bcastAddr, 0, sizeof(bcastAddr));
@@ -61,31 +62,30 @@ void main() {
 	printf(" \n");	//very important for some weird reason
 
 	bcastAddr.sin_family = AF_INET;
-	bcastAddr.sin_addr.s_addr = inet_addr("10.52.7.255");
+	bcastAddr.sin_addr.s_addr = INADDR_BROADCAST;	//"192.168.43.255"
 	bcastAddr.sin_port = htons(BCAST_LISTEN);
  	
 	clntAddr.sin_family = AF_INET;
 	// clntAddr.sin_addr.s_addr = inet_addr(servName);
-	clntAddr.sin_port = htons(DATA_PORT);
+	// clntAddr.sin_port = htons(DATA_PORT);
 	
-	// if((bind(bcast_socket, (struct sockaddr*) &clntAddr, sizeof(bcastAddr))) < 0) {
-	// 	perror("Error : Broadcast socket bind failed");
-	// 	exit(1);
-	// }
+	if((bind(bcast_socket, (struct sockaddr*) &bcastAddr, sizeof(bcastAddr))) < 0) {
+		perror("Error : Broadcast socket bind failed");
+		exit(1);
+	}
 	
 	printf("Now listening for file requests...\n");
 	while(1) {
-		if(recvfrom(bcast_socket, buffer, strlen(buffer), 0,(struct sockaddr*)&bcastAddr, &bcastAddrLen) <= 0) {
-			perror("recvfrom failed : ");
+		if(recvfrom(bcast_socket, buffer, sizeof(buffer), 0,(struct sockaddr*)&clntAddr, &clntAddrLen) < 0) {
+			perror("recvfrom failed");
 			exit(1);
 		}
 		printf("Received request : %s\n", buffer);
 		if(!(p = fork())) {			//child
-			sscanf(buffer,"myIP:%[0-9.]FILE:%s",clntName ,file_path + strlen(FILE_ROOT));
-			clntAddr.sin_addr.s_addr = inet_addr(clntName);
-
 			char file_path[256] = FILE_ROOT;
-			sscanf(buffer, "FILE:%[^\n]", );	//append the file path to the FILE_ROOT
+			sscanf(buffer,"myIP:%[0-9.]FILE:%s",clntName ,file_path + strlen(FILE_ROOT));
+			// clntAddr.sin_addr.s_addr = inet_addr(clntName);
+
 			FILE *file_fd;
 
 			printf("File request : %s\n", buffer);
