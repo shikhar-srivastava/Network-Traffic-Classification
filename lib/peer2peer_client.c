@@ -18,7 +18,7 @@
 void main(int argc, char* argv[]) {
 	char buffer[PIECE_SIZE];
 	int data_socket, servPort, clntAddrLen;
-	struct sockaddr_in myAddr, bcastAddr, clntAddr,servAddr;
+	struct sockaddr_in myAddr, bcastAddr, clntAddr;
 	char* file_path;
 	
 	if(argc == 2) file_path = argv[1];
@@ -62,7 +62,7 @@ void main(int argc, char* argv[]) {
 	strcpy(buffer, strcat(buffer,file_path));
 	strcpy(buffer, strcat(buffer,"\0"));
         puts(buffer);
-	if(sendto(bcast_socket, buffer, strlen(buffer), 0,(struct sockaddr*) &bcastAddr, sizeof(servAddr)) <= 0) {
+	if(sendto(bcast_socket, buffer, strlen(buffer), 0,(struct sockaddr*) &bcastAddr, sizeof(bcastAddr)) <= 0) {
 		perror("Broadcast failed : ");
 		exit(1);
 	}
@@ -74,7 +74,7 @@ void main(int argc, char* argv[]) {
 		perror("Error : Listen socket creation failed");
 		exit(1);
 	}
-	if((bind(listen_socket,(struct sockaddr*) &servAddr,sizeof(servAddr)))<0) {
+	if((bind(listen_socket,(struct sockaddr*) &myAddr, sizeof(myAddr)))<0) {
 		perror("Error : Listen socket bind failed");
 		exit(1);
 	}

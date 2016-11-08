@@ -67,7 +67,7 @@ void main() {
  	
 	clntAddr.sin_family = AF_INET;
 	// clntAddr.sin_addr.s_addr = inet_addr(servName);
-	// clntAddr.sin_port = htons(DATA_PORT);
+	clntAddr.sin_port = htons(DATA_PORT);
 	
 	if((bind(bcast_socket, (struct sockaddr*) &bcastAddr, sizeof(bcastAddr))) < 0) {
 		perror("Error : Broadcast socket bind failed");
@@ -84,11 +84,11 @@ void main() {
 		if(!(p = fork())) {			//child
 			char file_path[256] = FILE_ROOT;
 			sscanf(buffer,"myIP:%[0-9.]FILE:%s",clntName ,file_path + strlen(FILE_ROOT));
-			// clntAddr.sin_addr.s_addr = inet_addr(clntName);
+			clntAddr.sin_addr.s_addr = inet_addr(clntName);
 
 			FILE *file_fd;
 
-			printf("File request : %s\n", buffer);
+			printf("File request : %s from %s\n", file_path, clntName);
 
 			if((file_fd = fopen(file_path, "r")) == NULL) {	//file not found
 				printf("File not found\n");
