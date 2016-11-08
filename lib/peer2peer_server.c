@@ -61,7 +61,7 @@ void main() {
 	printf(" \n");	//very important for some weird reason
 
 	bcastAddr.sin_family = AF_INET;
-	bcastAddr.sin_addr.s_addr = inet_addr("192.168.43.255");
+	bcastAddr.sin_addr.s_addr = inet_addr("10.52.7.255");
 	bcastAddr.sin_port = htons(BCAST_LISTEN);
  	
 	clntAddr.sin_family = AF_INET;
@@ -81,11 +81,11 @@ void main() {
 		}
 		printf("Received request : %s\n", buffer);
 		if(!(p = fork())) {			//child
-			sscanf(buffer,"myIP:%[0-9.^\n]",clntName);
+			sscanf(buffer,"myIP:%[0-9.]FILE:%s",clntName ,file_path + strlen(FILE_ROOT));
 			clntAddr.sin_addr.s_addr = inet_addr(clntName);
 
 			char file_path[256] = FILE_ROOT;
-			sscanf(buffer, "FILE:%[^\n]", file_path + strlen(FILE_ROOT));	//append the file path to the FILE_ROOT
+			sscanf(buffer, "FILE:%[^\n]", );	//append the file path to the FILE_ROOT
 			FILE *file_fd;
 
 			printf("File request : %s\n", buffer);

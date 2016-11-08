@@ -33,7 +33,7 @@ void main(int argc, char* argv[]) {
 	
 	memset(&myAddr, 0, sizeof(myAddr));
 	myAddr.sin_family = AF_INET;
-	myAddr.sin_addr.s_addr = inet_addr("192.168.43.68");
+	myAddr.sin_addr.s_addr = inet_addr("1192.168.43.68");
 	// inet_pton(AF_INET, INADDR_ANY, &myAddr.sin_addr);
 	myAddr.sin_port = htons(servPort);
 	
@@ -59,9 +59,9 @@ void main(int argc, char* argv[]) {
 	char myIP[] = "192.168.43.68";
 	strcpy(buffer, "myIP:");
 	strcpy(buffer, strcat(buffer,myIP));
-	strcpy(buffer, strcat(buffer,"\nFILE:"));
+	strcpy(buffer, strcat(buffer,"FILE:"));
 	strcpy(buffer, strcat(buffer,file_path));
-	strcpy(buffer, strcat(buffer,"\n"));
+	strcpy(buffer, strcat(buffer,"\0"));
 
 	if(sendto(bcast_socket, buffer, strlen(buffer), 0,(struct sockaddr*) &bcastAddr, sizeof(servAddr)) <= 0) {
 		perror("Broadcast failed : ");
@@ -91,10 +91,10 @@ void main(int argc, char* argv[]) {
 
 	poll(&data_poll, 1, 5000);
 
-	// if(data_poll.revents != POLLIN) {	//exit on timeout for data transfer initiaion
-	// 	printf("No responses!\n");
-	// 	exit(0);
-	// }
+	if(data_poll.revents != POLLIN) {	//exit on timeout for data transfer initiaion
+		printf("No responses!\n");
+		exit(0);
+	}
 	if((data_socket = accept(listen_socket, (struct sockaddr*)&myAddr, &clntAddrLen)) < 0) {
 		perror("Error : accept failed");
 		exit(1);
