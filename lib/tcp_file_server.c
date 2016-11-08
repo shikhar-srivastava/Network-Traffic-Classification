@@ -32,10 +32,14 @@ void sendFile(int data_socket, FILE* file_fd) {
 	fclose(file_fd);
 }
 
-void main() {
+void main(int argc, char* argv[]) {
 	int data_socket, len = 0, servPort, listen_socket, n=0, waitSize=16, clntAddrLen = sizeof(struct sockaddr_in), p;
 	struct sockaddr_in servAddr, clntAddr;
-	char servName[]="192.168.43.68";
+	if(argc == 2) char servName[]="192.168.43.68";
+	else {
+		printf("Usage : $%s \"your_IP_addr\"\n", argv[0]);
+		exit(1);
+	}
 	servPort = 38086;
 	memset(&servAddr,0,sizeof(servAddr));
 	
