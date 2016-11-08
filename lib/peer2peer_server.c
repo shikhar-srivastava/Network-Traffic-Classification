@@ -46,8 +46,6 @@ void main() {
 	
 	char clntName[15];
 	
-	memset(&clntAddr, 0, sizeof(clntAddr));
-	memset(&bcastAddr, 0, sizeof(bcastAddr));
 	
 	if((bcast_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) { //Broadcast socket for accepting requests
 		perror("Error : Broadcast socket creation failed");
@@ -61,12 +59,14 @@ void main() {
 	}
 	printf(" \n");	//very important for some weird reason
 
+	memset(&bcastAddr, 0, sizeof(bcastAddr));
 	bcastAddr.sin_family = AF_INET;
 	bcastAddr.sin_addr.s_addr = INADDR_BROADCAST;	//"192.168.43.255"
 	bcastAddr.sin_port = htons(BCAST_LISTEN);
  	
+	memset(&clntAddr, 0, sizeof(clntAddr));
 	clntAddr.sin_family = AF_INET;
-	// clntAddr.sin_addr.s_addr = inet_addr(servName);
+	// clntAddr.sin_addr.s_addr = inet_addr();	//will be set later
 	clntAddr.sin_port = htons(DATA_PORT);
 	
 	if((bind(bcast_socket, (struct sockaddr*) &bcastAddr, sizeof(bcastAddr))) < 0) {
@@ -80,15 +80,17 @@ void main() {
 			perror("recvfrom failed");
 			exit(1);
 		}
-		printf("Received request : %s\n", buffer);
+		
 		if(!(p = fork())) {			//child
 			char file_path[256] = FILE_ROOT;
 			sscanf(buffer,"myIP:%[0-9.]FILE:%s",clntName ,file_path + strlen(FILE_ROOT));
-			clntAddr.sin_addr.s_addr = inet_addr(clntName);
 
-			FILE *file_fd;
+			clntAddr.sin_addr.s_addr = inet_addr(clntName);
+			clntAddr.sin_port = htons(DATA_PORT);
 
 			printf("File request : %s from %s\n", file_path, clntName);
+			
+			FILE *file_fd;
 
 			if((file_fd = fopen(file_path, "r")) == NULL) {	//file not found
 				printf("File not found\n");
@@ -101,13 +103,14 @@ void main() {
 			}
 			
 			if((connect(data_socket, (struct sockaddr*) &clntAddr, sizeof(clntAddr))) < 0) {
-				printf("The server is offline!\n");
+				perror("The server is offline");
 				exit(1);
 			}
 
 			sendFile(data_socket, file_fd);
 			
 			close(data_socket);
+			printf("\n");
 			break;
 		}
 		else if(p > 0) continue;	//parent
