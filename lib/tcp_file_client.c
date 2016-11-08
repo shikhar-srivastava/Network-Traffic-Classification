@@ -56,14 +56,22 @@ void main(int argc, char* argv[]) {
 		FILE *file_fd = fopen(file_path, "w+");
 
 		while(total_bytes_read < file_size) {
-			bytes_read = recv(data_socket, buffer, PIECE_SIZE, MSG_DONTWAIT);
+			bytes_read = recv(data_socket, buffer, PIECE_SIZE, 0);
 			if(bytes_read <= 0)
 				break;
 			fwrite(buffer, sizeof(char), bytes_read, file_fd);
 			total_bytes_read += bytes_read;
+			printf("\r");
+			int i, current_progress = (bytes_read/total_bytes_read) * 80;
+			for(i = 0; i < current_progress; i++)
+				printf("*");
+			for(; i < 80; i++)
+				printf("-");
 		}
+		printf("\r");
 		fclose(file_fd);
 		printf("Read %ld bytes into %s succesfully!\n", total_bytes_read, file_path);
+
 	}
 	else
 		printf("File not found!\n");
