@@ -19,11 +19,14 @@ void main(int argc, char* argv[]) {
 	char buffer[PIECE_SIZE];
 	int data_socket, servPort, clntAddrLen;
 	struct sockaddr_in myAddr, bcastAddr, clntAddr;
-	char* file_path;
+	char* file_path, *myIP;
 	
-	if(argc == 2) file_path = argv[1];
+	if(argc == 3) {
+		file_path = argv[1];
+		myIP = argv[2];
+	}
 	else {
-		printf("Usage : $%s \"file_name\"\n", argv[0]);
+		printf("Usage : $%s \"file_name\" \"your_IP_addr\"\n", argv[0]);
 		exit(1);
 	}
 	//char servName[]="127.0.0.1";
@@ -32,7 +35,7 @@ void main(int argc, char* argv[]) {
 	
 	memset(&myAddr, 0, sizeof(myAddr));
 	myAddr.sin_family = AF_INET;
-	myAddr.sin_addr.s_addr = inet_addr("192.168.43.67");
+	myAddr.sin_addr.s_addr = inet_addr();
 	myAddr.sin_port = htons(DATA_PORT);	
 	
 	memset(&bcastAddr, 0, sizeof(bcastAddr));
@@ -54,7 +57,7 @@ void main(int argc, char* argv[]) {
 	printf(" \n");	//very important for some weird reason
 
 	//prepare Broadcast message
-	char myIP[] = "192.168.43.67";
+	// char myIP[] = "192.168.43.67";
 	strcpy(buffer, "myIP:");
 	strcpy(buffer, strcat(buffer,myIP));
 	strcpy(buffer, strcat(buffer,"FILE:"));
@@ -116,14 +119,7 @@ void main(int argc, char* argv[]) {
 				break;
 			fwrite(buffer, sizeof(char), bytes_read, file_fd);
 			total_bytes_read += bytes_read;
-			printf("\r");
-			int i, current_progress = (total_bytes_read/file_size) * 50;
-			for(i = 0; i < current_progress; i++)
-				printf("*");
-			for(; i < 50; i++)
-				printf("-");
 		}
-		printf("\r");
 		fclose(file_fd);
 		printf("Read %ld bytes into %s succesfully!\n", total_bytes_read, file_path);
 
