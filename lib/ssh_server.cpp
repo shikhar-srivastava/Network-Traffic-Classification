@@ -1,15 +1,12 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <iostream>
+using namespace std;
 #include<libssh/libssh.h>
 #include<libssh/server.h>
-#define RSAPATH "/libssh/ssh_host_rsa_key"
-#define DSAPATH "/libssh/ssh_host_dsa_key"
 
 static int auth_password(const char *user, const char *password){
-    if(strcmp(user,"user"))
+    if(strcmp(user,"****"))
         return 0;
-    if(strcmp(password,"pass"))
+    if(strcmp(password,"*****"))
         return 0;
     return 1; // authenticated
 }
@@ -24,44 +21,37 @@ int main(int argc, char **argv){
     int sftp=0;
     int i;
     int r;
-    int verbosity=1;
+
     sshbind=ssh_bind_new();
     session=ssh_new();
-    int port = 2232;
-    int iError;
-    iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_RSAKEY, "libssh/ssh_host_rsa_key");
-    
-   // iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_DSAKEY, "libssh/ssh_host_dsa_key");
-    
-    iError=ssh_options_set(session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
-    iError=ssh_options_set(session, SSH_OPTIONS_PORT, &port);
-    iError=ssh_options_set(session, SSH_OPTIONS_HOST, "localhost");
+    int port = 2222;
+    int iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_RSAKEY, RSAPATH);
+    iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_DSAKEY, DSAPATH);
     iError= ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_BINDPORT, &port);
     iError=ssh_bind_options_set(sshbind, SSH_BIND_OPTIONS_LOG_VERBOSITY_STR, "1");
-    puts("Binding done");
-    puts(ssh_get_error(session));
+
     if(iError < 0 )
-        printf("Error listening to socket: %s\n",ssh_get_error(sshbind));
-    puts("listen...");
+        std::cout<<"Error listening to socket "<< ssh_get_error(sshbind)<<std::endl;
+    std::cout<<"listen..."<<std::endl;
 
     if(ssh_bind_listen(sshbind)<0){
         printf("Error listening to socket: %s\n",ssh_get_error(sshbind));
         return 1;
     }
-        puts("accept...");
+        std::cout<<"accept..."<<std::endl;
 
     r=ssh_bind_accept(sshbind,session);
     if(r==SSH_ERROR){
-      puts("error accepting a connection :");puts(ssh_get_error(sshbind));
+      printf("error accepting a connection : %s\n",ssh_get_error(sshbind));
       return 1;
     }
-        puts("acepted,exchange key...");
+        std::cout<<"acepted,exchange key..."<<std::endl;
 
     if (ssh_handle_key_exchange(session)) {
-        puts("ssh_handle_key_exchange: ");puts(ssh_get_error(session));
+        printf("ssh_handle_key_exchange: %s\n", ssh_get_error(session));
         return 1;
     }
-        puts("key done get message...");
+        std::cout<<"key done get message..."<<std::endl;
 
     do {
         message=ssh_message_get(session); 
@@ -98,7 +88,6 @@ int main(int argc, char **argv){
         ssh_disconnect(session);
         return 1;
     }
-    puts("Auth Done");
     do {
         message=ssh_message_get(session);
         if(message){
@@ -138,7 +127,7 @@ int main(int argc, char **argv){
         printf("error sftp: %s\n",ssh_get_error(session));
         return 1;
     }
-    puts("it works !\n");
+    printf("it works !\n");
     do{
         i=ssh_channel_read(chan,buf, 2048, 0);
         if(i>0) {

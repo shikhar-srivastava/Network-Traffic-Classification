@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
         return -1;
 
 
-    my_ssh_session = connect_ssh("localhost","user",2232,verbosity);
+    my_ssh_session = connect_ssh("localhost","atlas",verbosity);
   if(my_ssh_session == NULL)
   {
     printf("Myssh NULL error connect_ssh\n");
@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
   }
   printf("Connection Completed shell startup");
     send_command_and_receive_result(my_ssh_session,"ls");
-   //shell_session(my_ssh_session);
+  //shell_session(my_ssh_session);
 
 
     ssh_disconnect(my_ssh_session);
