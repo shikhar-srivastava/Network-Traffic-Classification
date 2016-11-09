@@ -35,7 +35,8 @@ void sendFile(int data_socket, FILE* file_fd) {
 void main(int argc, char* argv[]) {
 	int data_socket, len = 0, servPort, listen_socket, n=0, waitSize=16, clntAddrLen = sizeof(struct sockaddr_in), p;
 	struct sockaddr_in servAddr, clntAddr;
-	if(argc == 2) char servName[]="192.168.43.68";
+	char* servName;
+	if(argc == 2) servName = argv[1];
 	else {
 		printf("Usage : $%s \"your_IP_addr\"\n", argv[0]);
 		exit(1);

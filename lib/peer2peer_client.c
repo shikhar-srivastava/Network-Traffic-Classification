@@ -35,7 +35,7 @@ void main(int argc, char* argv[]) {
 	
 	memset(&myAddr, 0, sizeof(myAddr));
 	myAddr.sin_family = AF_INET;
-	myAddr.sin_addr.s_addr = inet_addr();
+	myAddr.sin_addr.s_addr = inet_addr(myIP);
 	myAddr.sin_port = htons(DATA_PORT);	
 	
 	memset(&bcastAddr, 0, sizeof(bcastAddr));

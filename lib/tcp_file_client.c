@@ -25,10 +25,10 @@ void main(int argc, char* argv[]) {
 		myIP = argv[2];
 	}
 	else {
-		printf("Usage : $%s \"file_name\" \"your_IP_addr\"\n", argv[0]);
+		printf("Usage : $%s \"file_name\" \"serv_IP_addr\"\n", argv[0]);
 		exit(1);
 	}
-	char *servName=myIP;
+	char *servName = myIP;
 	servPort = 38086;
 	
 	memset(&servAddr,0,sizeof(servAddr));
