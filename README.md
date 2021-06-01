@@ -27,4 +27,4 @@ Classifying network traffic accurately, efficiently in real-time, using features
 
 
 ## Usage
-Refer to folders [`network-simulation`](https://github.com/shikhar-srivastava/Network-Traffic-Classification/tree/master/network/network_simulators), [`attack-simulation`](https://github.com/shikhar-srivastava/Network-Traffic-Classification/tree/master/network/attack_simulator)) for files to generate packets from respective network-level/application-level protocols. You can use a packet capture application to view the generated traffic.
+Refer to folders [`network-simulation`](https://github.com/shikhar-srivastava/Network-Traffic-Classification/tree/master/network/network_simulators), [`attack-simulation`](https://github.com/shikhar-srivastava/Network-Traffic-Classification/tree/master/network/attack_simulator)) for files to generate packets from respective network-level/application-level protocols. You can use a packet capture application (see [`wireshark`](https://www.wireshark.org)) to view the generated traffic.
